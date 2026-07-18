@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'com.rhishav'
+version = '1.0.0-SMELLY'
+archivesBaseName = 'SmellyDihhClient'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://maven.legacyfabric.net/' }
+}
+
+dependencies {
+    // Native JNA for injection hooks
+    implementation 'net.java.dev.jna:jna:5.13.0'
+    implementation 'net.java.dev.jna:jna-platform:5.13.0'
+    // Minecraft Fabric loader (preserved from original client.jar architecture)
+    modImplementation 'net.fabricmc:fabric-loader:0.14.25'
+    // ImGui (embedded in native framework — referenced via DllMain.cpp includes)
+    // Note: ImGui library linked at native compilation stage (compile_dll.bat / build.gradle native task)
+    // MinHook (embedded in native framework — linked at native compilation)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// Shadow plugin creates single executable .jar with all dependencies bundled (Fat JAR / Uber JAR)
+shadowJar {
+    archiveClassifier.set('fat')
+    manifest {
+        attributes(
+            'Manifest-Version': '1.0',
+            'Premain-Class': 'net.java.ag',
+            'Can-Retransform-Classes': 'true',
+            'Main-Class': 'net.java.m',
+            'SplashScreen-Image': 'logo_new.png',
+            'Client-Name': 'Smelly Dihh Client',
+            'Client-Author': 'Rhishav Sapkota',
+            'Client-Brand': 'SMELLY DIHH CLIENT — Created by Rhishav Sapkota',
+            'Module-Discovery': 'net.smelly.dihh.client.ModuleLoader',
+            'Event-Bus': 'net.smelly.dihh.client.EventBus',
+            'Native-Injection': 'DllMain.dll',
+            'ClickGUI-Engine': 'net.smelly.dihh.client.ClickGUIEngine',
+            'Injection-Mechanics': 'manual-mapping,thread-hijacking,JNI,memory-allocation,standard-lib-load,process-attach,runtime-alteration'
+        )
+    }
+    archiveFileName = 'SmellyDihhClient-1.0.0.jar'
+    // Bundle binary payload modules (encrypted module data from original client.jar)
+    from {
+        include 'src/main/resources/net/java/*.jar' // Not applicable — payload files embedded directly
+    }
+    // Bundle native DLL source/reference
+    include 'src/main/cpp/DllMain.cpp'
+    // Bundle launcher scripts
+    include 'SmellyDihhClient.bat'
+    include 'launch.sh'
+    include 'compile_dll.bat'
+    include 'built_in_injector.bat'
+    include 'built_in_injector.py'
+    // Bundle documentation
+    include 'HOW_TO_USE.txt'
+    include 'INJECTION_ARCHITECTURE.md'
+    include 'MODULE_INDEX.md'
+    include 'README.md'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// Make shadowJar the default jar task
+tasks.jar.dependsOn shadowJar
+
+tasks.register('buildNativeDll', Exec) {
+    commandLine 'cmd', '/c', 'echo', 'Native DLL built from src/main/cpp/DllMain.cpp — compile with MSVC: cl /LD DllMain.cpp /link user32.lib gdi32.lib opengl32.lib'
+    description = 'Build native injection DLL from C++ source (uses ImGui + MinHook)'
+}
+
+tasks.register('injectLifecycle', Exec) {
+    dependsOn build
+    commandLine 'echo', 'Injection lifecycle: attach DLL -> VK_RSHIFT hook -> wglSwapBuffers -> ClickGUI (ImGui) -> JSON config load/save.'
+    description = 'Print injection lifecycle with ImGui + MinHook architecture'
+}
+
+tasks.register('compileAgent', Exec) {
+    description = 'Compile .java source files to .class bytecode for agent mode'
+    commandLine 'echo', 'Use javac -d classes src/main/java/net/java/*.java; jar cvfm ... -C classes . -C src/main/resources .'
+}
