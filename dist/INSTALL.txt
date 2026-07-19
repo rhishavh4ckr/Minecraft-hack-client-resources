@@ -1,0 +1,21 @@
+=============================================================
+ SMELLY DIHH CLIENT - installation
+-------------------------------------------------------------
+ 1. In this folder, double-click START-HERE.bat (or open
+    Command Prompt here and run:  BUILD.BAT)
+    - The script auto-finds javac.exe on your PATH and then
+      locates jar.exe in your real JDK folder (it knows to
+      look past Oracle's javapath shim at
+      C:\Program Files\Common Files\Oracle\Java\javapath\
+      which does NOT contain jar.exe).
+    - If jar.exe is still not found (rare), BUILD.BAT falls
+      back to PowerShell's built-in zip - a .jar is just a
+      .zip with a manifest, so Forge/Fabric/java -jar still
+      accept it.
+ 2. The batch compiles the UI framework + bootstrap stubs
+    and produces build\client-patched.jar.
+ 3. Put client-patched.jar into your mods\ folder (Forge/
+    Fabric/LabyMod) or run it standalone with
+        java -jar build\client-patched.jar
+ Press RIGHT_SHIFT in-game to open the new ClickGUI.
+=============================================================

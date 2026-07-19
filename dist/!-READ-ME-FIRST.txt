@@ -1,0 +1,32 @@
+================================================================
+  SMELLY DIHH CLIENT - HOW TO RUN
+================================================================
+
+ 1. RIGHT-CLICK the file "SMELLY-DIHH-CLIENT.zip" in your
+    Downloads folder.
+ 2. Click "Extract All..." from the right-click menu.
+ 3. Pick a folder like C:\SmellyDihh\ and click Extract.
+ 4. OPEN the folder you just extracted into.
+ 5. DOUBLE-CLICK "ONE-CLICK.cmd"
+    (if Windows SmartScreen says "Windows protected your PC",
+     click "More info" then "Run anyway".)
+ 6. A black Command Prompt window will open with CYAN text
+    and say "BUILD SUCCESSFUL!" when done (green text).
+ 7. Copy build\client-patched.jar into your Minecraft mods\
+    folder, or run:
+        java -jar build\client-patched.jar
+
+  Press RIGHT_SHIFT in-game to open the ClickGUI.
+
+ IF THE WINDOW FLASHES OPEN AND CLOSES
+ -------------------------------------
+     Double-click RUN-ME.vbs instead of ONE-CLICK.cmd.
+     The .vbs file launches a fully persistent window that
+     CANNOT close until you press a key.
+
+ IF THERE IS AN ERROR IN RED TEXT
+ --------------------------------
+     Take a SCREENSHOT of the whole black window and send
+     it, or attach BUILD-LOG.txt which is created in this
+     folder after running.
+================================================================
