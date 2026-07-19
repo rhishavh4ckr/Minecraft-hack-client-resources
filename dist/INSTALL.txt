@@ -1,0 +1,12 @@
+=============================================================
+ LionClient Redesigned - installation
+-------------------------------------------------------------
+ 1. In this folder, double-click BUILD.BAT (or open Command
+    Prompt here and run:  BUILD.BAT)
+ 2. The batch file will compile the UI framework + bootstrap
+    stubs and produce client-patched.jar.
+ 3. Put client-patched.jar into your mods/ folder (Forge/
+    Fabric/LabyMod) or run it standalone with
+        java -jar client-patched.jar
+ Press RIGHT_SHIFT in-game to open the new ClickGUI.
+=============================================================
