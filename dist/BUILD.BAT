@@ -2,26 +2,73 @@
 REM =================================================================
 REM  LionClient Redesigned - one-click Windows builder
 REM  Run this from the LionClient folder you unzipped.
-REM  Produces client-patched.jar ready to drop into mods/
+REM  Produces build\client-patched.jar ready to drop into mods/
 REM =================================================================
 setlocal ENABLEDELAYEDEXPANSION
 
 echo [1/6] Locating JDK ...
-for /f "delims=" %%J in ('where javac 2^>nul') do set JAVAC=%%~fJ
+set "JAVAC="
+set "JAR="
+
+REM 1) JAVA_HOME takes priority
+if defined JAVA_HOME (
+    if exist "%JAVA_HOME%\bin\javac.exe" set "JAVAC=%JAVA_HOME%\bin\javac.exe"
+    if exist "%JAVA_HOME%\bin\jar.exe"   set "JAR=%JAVA_HOME%\bin\jar.exe"
+)
+
+REM 2) Look on PATH
 if not defined JAVAC (
-    echo ERROR: javac not found on PATH. Install a JDK 8+ and try again.
+    for /f "delims=" %%J in ('where javac 2^>nul') do set "JAVAC=%%~fJ"
+)
+
+REM 3) If we found javac, try jar.exe next to it (works for a real JDK bin/)
+if defined JAVAC if not defined JAR (
+    for %%I in ("%JAVAC%") do set "JDK_BIN=%%~dpI"
+    if exist "!JDK_BIN!jar.exe" set "JAR=!JDK_BIN!jar.exe"
+)
+
+REM 4) Oracle's PATH shim is in Common Files\Oracle\Java\javapath\ and does NOT
+REM    contain jar.exe. Walk up from the shim target and search common JDK homes.
+if not defined JAR (
+    for %%D in (
+        "C:\Program Files\Java"
+        "C:\Program Files\Eclipse Adoptium"
+        "C:\Program Files\Microsoft"
+        "C:\Program Files\Zulu"
+        "C:\Program Files\Amazon Corretto"
+        "C:\Program Files (x86)\Java"
+        "%LOCALAPPDATA%\Programs\Eclipse Adoptium"
+        "%LOCALAPPDATA%\Programs\Microsoft"
+    ) do (
+        if exist %%~D (
+            for /f "delims=" %%X in ('dir /b /s /a-d "%%~D\bin\jar.exe" 2^>nul') do (
+                if not defined JAR set "JAR=%%~fX"
+            )
+        )
+    )
+)
+
+REM 5) If jar.exe was found, re-derive JAVAC from that bin folder if needed
+if defined JAR (
+    for %%I in ("%JAR%") do set "JDK_BIN=%%~dpI"
+    if not defined JAVAC if exist "!JDK_BIN!javac.exe" set "JAVAC=!JDK_BIN!javac.exe"
+)
+
+if not defined JAVAC (
+    echo ERROR: javac.exe not found. Install a JDK (8 or newer) and try again,
+    echo        or set the JAVA_HOME environment variable to your JDK folder.
     pause
     exit /b 1
 )
-for %%I in ("%JAVAC%") do set JDK_BIN=%%~dpI
-set JAR="%JDK_BIN%jar.exe"
-if not exist %JAR% (
-    echo ERROR: jar.exe not found next to javac in %JDK_BIN%
-    pause
-    exit /b 1
-)
+
 echo     javac = %JAVAC%
-echo     jar   = %JAR%
+if defined JAR (
+    echo     jar   = %JAR%
+    set "PACK_MODE=jar"
+) else (
+    echo     jar   = jar.exe not found - will use PowerShell Compress-Archive fallback
+    set "PACK_MODE=zip"
+)
 
 echo [2/6] Cleaning old build ...
 if exist build rmdir /s /q build
@@ -48,7 +95,7 @@ dir /s /b net\hackclient\*.java org\json\*.java com\sun\jna\*.java ^
                   net\java\h.java net\java\i.java net\java\r.java net\java\s.java ^
                   net\java\ag.java net\java\t.java net\java\m.java net\java\l.java ^
                   BaseMod.java mod_d.java > sources.txt
-javac -encoding UTF-8 --release 8 -d _build\classes @sources.txt
+"%JAVAC%" -encoding UTF-8 -source 8 -target 8 -d _build\classes @sources.txt
 if errorlevel 1 (
     echo.
     echo ERROR: Compilation failed - see errors above.
@@ -59,9 +106,25 @@ if errorlevel 1 (
 xcopy /E /Y /Q _build\classes\* . >nul
 
 echo [5/6] Packaging client-patched.jar ...
-%JAR% cfm client-patched.jar META-INF\MANIFEST.MF .
+if /i "%PACK_MODE%"=="jar" (
+    "%JAR%" cfm client-patched.jar META-INF\MANIFEST.MF .
+) else (
+    REM Fallback: use PowerShell's built-in zip. A .jar IS a .zip with a
+    REM manifest, so this is accepted by Forge/Fabric/java -jar.
+    if exist client-patched.jar del /q client-patched.jar
+    powershell -NoProfile -Command ^
+      "Compress-Archive -Path '*' -DestinationPath 'client-patched.zip' -Force" ^
+      2>nul
+    if errorlevel 1 (
+        echo ERROR: PowerShell zip failed.
+        cd ..
+        pause
+        exit /b 1
+    )
+    move /y client-patched.zip client-patched.jar >nul
+)
 if errorlevel 1 (
-    echo ERROR: jar packaging failed
+    echo ERROR: Packaging failed
     cd ..
     pause
     exit /b 1
