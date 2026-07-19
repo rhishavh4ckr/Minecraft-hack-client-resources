@@ -1,14 +1,13 @@
 @echo off
 REM ================================================================
-REM  LionClient Redesigned - START HERE (double-click this)
+REM  SMELLY DIHH CLIENT - START HERE (double-click this)
 REM  Keeps the window open even on errors.
 REM ================================================================
-@echo off
 setlocal
 cd /d "%~dp0"
 echo.
 echo ########################################
-echo #  LionClient Redesigned - START HERE  #
+echo #   SMELLY DIHH CLIENT  -  START HERE  #
 echo ########################################
 echo.
 echo Working folder: %CD%

@@ -1,8 +1,8 @@
 =============================================================
- LionClient Redesigned - installation
+ SMELLY DIHH CLIENT - installation
 -------------------------------------------------------------
- 1. In this folder, double-click BUILD.BAT (or open Command
-    Prompt here and run:  BUILD.BAT)
+ 1. In this folder, double-click START-HERE.bat (or open
+    Command Prompt here and run:  BUILD.BAT)
     - The script auto-finds javac.exe on your PATH and then
       locates jar.exe in your real JDK folder (it knows to
       look past Oracle's javapath shim at

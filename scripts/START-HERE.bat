@@ -1,23 +1,29 @@
 @echo off
 REM ================================================================
-REM  LionClient Redesigned - START-HERE
-REM  Double-click THIS file. It opens a Command Prompt that stays
-REM  open even if something errors, then runs BUILD.BAT.
+REM  SMELLY DIHH CLIENT - START HERE (double-click this)
+REM  Keeps the window open even on errors.
 REM ================================================================
+setlocal
+cd /d "%~dp0"
 echo.
-echo ========================================
-echo  LionClient Redesigned - builder
-echo ========================================
+echo ########################################
+echo #   SMELLY DIHH CLIENT  -  START HERE  #
+echo ########################################
 echo.
-echo Working in: %CD%
+echo Working folder: %CD%
 echo.
+echo Contents of this folder:
+dir /b
+echo.
+echo Running BUILD.BAT ...
+echo ================================================================
 call "%~dp0BUILD.BAT"
+set RC=%ERRORLEVEL%
+echo ================================================================
 echo.
-echo ========================================
-echo  BUILD.BAT finished (exit code %ERRORLEVEL%).
-echo  Window kept open so you can read any errors.
-echo  You can close this window now.
-echo ========================================
+echo BUILD.BAT exited with code %RC%.
+echo (Window kept open so you can read messages above.)
 echo.
 pause
-exit /b %ERRORLEVEL%
+endlocal
+exit /b %RC%
