@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Premain-Class: net.java.ag
+Can-Retransform-Classes: true
+Main-Class: net.java.m
+Client-Name: Smelly Dihh Client
+Client-Author: Rhishav Sapkota
+Client-Brand: SMELLY DIHH CLIENT — Created by Rhishav Sapkota

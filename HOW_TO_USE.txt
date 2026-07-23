@@ -1,0 +1,56 @@
+HOW TO USE SMELLY DIHH CLIENT
+================================
+Author: Rhishav Sapkota
+
+=== IMPORTANT ===
+This is NOT a desktop .exe. It is an INJECTION CLIENT.
+Double-clicking SmellyDihhClient.jar will NOT work.
+You must either compile the .class files OR use native DLL injection.
+
+=== METHOD 1: COMPILE AND RUN (Agent Mode) ===
+Requires: Java JDK installed (javac command available)
+
+1. Compile the Java source files:
+   javac -d classes src/main/java/net/java/*.java
+
+2. Build the jar with compiled classes:
+   jar cvfm SmellyDihhClient.jar META-INF/MANIFEST.MF -C classes . -C src/main/resources .
+
+3. Launch Minecraft with the agent:
+   java -javaagent:SmellyDihhClient.jar -Xmx2G -jar Minecraft.jar
+
+4. Once inside Minecraft, press RIGHT SHIFT (VK_RSHIFT) to open ClickGUI.
+
+=== METHOD 2: NATIVE DLL INJECTION ===
+Requires: Visual Studio with C++ (MSVC) or MinGW/gcc
+
+1. Compile the DLL:
+   MSVC: cl /LD src/main/cpp/DllMain.cpp /link user32.lib gdi32.lib opengl32.lib
+   OR gcc: gcc -shared -o DllMain.dll src/main/cpp/DllMain.cpp -luser32 -lgdi32 -lopengl32
+
+2. Launch Minecraft with ANY launcher.
+
+3. Once the Minecraft window is open and running:
+   - Use an injector tool (Process Hacker, Extreme Injector, etc.)
+   - Select the javaw.exe process hosting Minecraft
+   - Inject DllMain.dll
+
+4. The DLL attaches silently to the JVM. No splash screen needed.
+
+5. Press RIGHT SHIFT (VK_RSHIFT) — ClickGUI opens with glass cards.
+
+=== WHY IT CRASHES ===
+The jar contains .java SOURCE files (text) but the Main-Class (net.java.m)
+needs compiled .class BYTECODE to run. Without javac compilation,
+Java tries to load text as bytecode and crashes.
+The native DLL injection (Method 2) avoids this entirely.
+
+=== WHAT WORKS RIGHT NOW ===
+- Binary payload modules (a, b, c, d, e) — encrypted module code from original client
+- Native framework (DllMain.cpp) — manual mapping, thread hijacking, JNI, memory allocation
+- ClickGUI engine (net/smelly/dihh/client/ClickGUIEngine.java)
+- Module bridge (net/java/SmellyDihhBridge.java)
+- Zero old branding (l.png removed, new logo_new.png, "smellydihh" modid)
+
+Download: https://github.com/rhishavh4ckr/Minecraft-hack-client-resources/releases/tag/v1.0.0-SMELLY
+Direct jar: https://github.com/rhishavh4ckr/Minecraft-hack-client-resources/raw/arena/019f8a5b-minecraft-hack-client-resource/SmellyDihhClient.jar

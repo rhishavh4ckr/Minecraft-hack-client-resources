@@ -1,0 +1,1 @@
+{"schemaVersion":1,"id":"smellydihh","version":"1.0.0","entrypoints":{"main":["net.java.h","net.smelly.dihh.client"]},"name":"Smelly Dihh Client","author":"Rhishav Sapkota","description":"A high-performance internal injection client with glassmorphism ClickGUI, native DLL hooks, and full module bridge from base client.jar."}
