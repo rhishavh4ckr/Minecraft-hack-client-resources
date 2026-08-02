@@ -1,0 +1,16 @@
+{
+  "projects_folder": "C:\\Projects",
+  "ollama_url": "http://127.0.0.1:11434",
+  "model": "qwen2.5-coder:3b",
+  "max_history": 12,
+  "allowed_apps": {
+    "vscode": "C:\\Users\\YOUR_NAME\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+    "notepad": "C:\\Windows\\System32\\notepad.exe"
+  },
+  "allowed_commands": {
+    "git_status": ["git", "status", "--short"],
+    "git_diff": ["git", "diff", "--stat"],
+    "tests": ["python", "-m", "pytest", "-q"],
+    "format_python": ["python", "-m", "black", "."]
+  }
+}
